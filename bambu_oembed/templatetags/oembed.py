@@ -7,6 +7,7 @@ import re
 
 PATTERNS = list(URL_PATTERNS) + getattr(settings, 'OEMBED_URL_PATTERNS', [])
 WIDTH = getattr(settings, 'OEMBED_WIDTH', 640)
+DEBUG = getattr(settings, 'OEMBED_DEBUG', False)
 
 register = Library()
 
@@ -15,29 +16,29 @@ def oembed(value, width = WIDTH):
     """
     Takes an HTML or Markdown string and replaces oEmbed references (single lines with a URL to a resource
     that supports oEmbed) with the HTML representing the object.
-    
+
     :param value: The string to replace
     :param width: The maximum width of a resource (typically video or image)
     """
-    
+
     if not '<p' in value and not '</p>' in value:
         value = '<p>%s</p>' % value
-    
+
     match = URL_REGEX.search(value)
     if match is None:
         match = URL_REGEX.search(value)
-    
+
     while not match is None and match.end() <= len(value):
         start = match.start()
         end = match.end()
         groups = match.groups()
-        
+
         if len(groups) > 0:
             url = groups[0]
             inner = '<p><a href="%(url)s">%(url)s</a></p>' % {
                 'url': url
             }
-            
+
             for (pattern, endpoint, format) in PATTERNS:
                 if not re.match(pattern, url, re.IGNORECASE) is None:
                     try:
@@ -51,14 +52,17 @@ def oembed(value, width = WIDTH):
                                 url, width, endpoint, format
                             )
                         except:
+                            if not DEBUG:
+                                raise
+
                             break
-                    
+
                     inner = resource.html
                     break
         else:
             inner = ''
-        
+
         value = value[:start] + inner + value[end:]
         match = URL_REGEX.search(value, start + len(inner))
-    
+
     return mark_safe(value)

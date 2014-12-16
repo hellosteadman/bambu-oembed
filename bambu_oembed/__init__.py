@@ -1,14 +1,12 @@
 from django.conf import settings
-from django.utils.http import urlencode
-from urllib2 import Request, urlopen, HTTPError
-from elementtree import ElementTree
-import re
+import requests
 
 try:
-    import json as simplejson
+    from xml.etree import ElementTree
 except ImportError:
-    from django.utils import simplejson
+    from elementtree import ElementTree
 
+import re
 __version__ = '2.0'
 
 URL_REGEX = re.compile(
@@ -21,108 +19,104 @@ URL_REGEX = re.compile(
 )
 
 URL_PATTERNS = (
-    (r'^https?://(?:.+\.)?blip\.tv/file/.+$', 'http://blip.tv/oembed/?%s', 'json'),
-    (r'^https?://(?:www\.)?clikthrough\.com/theater/.+$', 
-        'http://clikthrough.com/services/oembed/?%s', 'json'
+    (r'^https?://(?:.+\.)?blip\.tv/file/.+$', 'http://blip.tv/oembed/', 'json'),
+    (r'^https?://(?:www\.)?clikthrough\.com/theater/.+$',
+        'http://clikthrough.com/services/oembed/', 'json'
     ),
     (r'^https?://(?:www\.)?dailymotion\.com/video/.+$',
-        'http://www.dailymotion.com/api/oembed/?%s', 'json'
+        'http://www.dailymotion.com/api/oembed/', 'json'
     ),
     (r'^https?://(?:www\.)?dotsub\.com/view/.+$',
-        'http://dotsub.com/services/oembed?%s', 'json'
+        'http://dotsub.com/services/oembed', 'json'
     ),
     (r'^https?://(?:www\.)?flickr\.com/photos/.+$',
-        'http://www.flickr.com/services/oembed/?%s', 'xml'
+        'http://www.flickr.com/services/oembed/', 'xml'
     ),
     (r'^https?://(?:www\.)?hulu\.com/watch/.+$',
-        'http://www.hulu.com/api/oembed.json?%s', 'json'
+        'http://www.hulu.com/api/oembed.json', 'json'
     ),
     (r'^https?://(?:www\.)?kinomap\.com/.+$',
-        'http://www.kinomap.com/oembed?%s', 'xml'
+        'http://www.kinomap.com/oembed', 'xml'
     ),
     (r'^https?://(?:www\.)?nfb\.ca/film/.+$',
-        'http://www.nfb.ca/remote/services/oembed/?%s',
+        'http://www.nfb.ca/remote/services/oembed/',
         'xml'
     ),
     (r'^https?://(?:www\.)?poddle\.tv/[\w-]+/\d+/$',
-        'http://poddle.tv/oembed/?%s', 'json'
+        'http://poddle.tv/oembed/', 'json'
     ),
-    (r'^https?://(.+\.)?photobucket\.com/(?:albums|groups)/.+$', 
-        'http://photobucket.com/oembed?%s', 'json'
+    (r'^https?://(.+\.)?photobucket\.com/(?:albums|groups)/.+$',
+        'http://photobucket.com/oembed', 'json'
     ),
     (r'^https?://(?:www\.)?qik\.com/video/.+$',
-        'http://qik.com/api/oembed.json?%s', 'json'
+        'http://qik.com/api/oembed.json', 'json'
     ),
     (r'^https?://(?:www\.)?revision3\.com/.+$',
-        'http://revision3.com/api/oembed/?%s', 'json'
+        'http://revision3.com/api/oembed/', 'json'
     ),
     (r'^https?://(?:www\.)?scribd\.com/doc/.+$',
-        'http://www.scribd.com/services/oembed?%s', 'json'
+        'http://www.scribd.com/services/oembed', 'json'
     ),
     (r'^https?://(?:www\.)?twitter\.com/(?:#!/)?[\w]+/status/\d+/?$',
-        'https://api.twitter.com/1/statuses/oembed.json?%s', 'json'
+        'https://api.twitter.com/1/statuses/oembed.json', 'json'
     ),
     (r'^https?://(?:www\.)?viddler\.com/v/.+$',
-        'http://www.viddler.com/oembed/?%s&format=json', 'json'
+        'http://www.viddler.com/oembed/?format=json', 'json'
     ),
     (r'^https?://(?:www\.)?vimeo\.com/.+$',
-        'http://vimeo.com/api/oembed.json?%s', 'json'
+        'http://vimeo.com/api/oembed.json', 'json'
     ),
-    (r'^https?://(?:www\.)?yfrog\.(?:com|ru|com\.tr|it|fr|co\.il|co\.uk|com\.pl|pl|eu|us)/.+$', 
-        'http://www.yfrog.com/api/oembed?%s', 'json'
+    (r'^https?://(?:www\.)?yfrog\.(?:com|ru|com\.tr|it|fr|co\.il|co\.uk|com\.pl|pl|eu|us)/.+$',
+        'http://www.yfrog.com/api/oembed', 'json'
     ),
     (r'^https?://(?:www\.)?youtube\.com/watch\?v=.+$',
-        'http://www.youtube.com/oembed?%s', 'json'
+        'http://www.youtube.com/oembed', 'json'
     ),
     (r'^https?://(?:www\.)?youtu\.be/.+$',
-        'http://www.youtube.com/oembed?%s', 'json'
+        'http://www.youtube.com/oembed', 'json'
     )
 )
 
 def get_oembed_response(url, endpoint, format, width = None):
     if not width:
         width = getattr(settings, 'OEMBED_WIDTH', 640)
-    
+
     if format == 'json':
         mimetype = 'application/json'
     elif format == 'xml':
         mimetype = 'text/xml'
     elif format != 'html':
         raise Exception('Handler configured incorrectly (unrecognised format %s)' % format)
-    
+
     params = {
         'url': url
     }
-    
+
     if int(width) > 0:
         params['width'] = width
         params['maxwidth'] = width
-    
+
     if not callable(endpoint):
-        oembed_request = Request(
-            endpoint % urlencode(params),
+        return requests.get(
+            endpoint,
+            params = params,
             headers = {
                 'Accept': mimetype,
                 'User-Agent': 'bambu-tools/2.1'
             }
         )
-        
-        try:
-            return urlopen(oembed_request)
-        except HTTPError, ex:
-            raise Exception(ex.msg)
     else:
         return endpoint(url)
 
 def get_oembed_content(url, endpoint, format, width = None):
     response = get_oembed_response(url, endpoint, format, width)
-    
+
     if format == 'json':
         try:
-            json = simplejson.load(response)
+            json = response.json()
         except:
             raise Exception('Not a JSON response')
-        
+
         if 'html' in json:
             return json.get('html')
         elif 'thumbnail_url' in json:
@@ -138,7 +132,7 @@ def get_oembed_content(url, endpoint, format, width = None):
             xml = ElementTree.parse(response)
         except:
             raise Exception('Not an XML response')
-        
+
         try:
             return xml.getroot().find('html').text or ''
         except:
