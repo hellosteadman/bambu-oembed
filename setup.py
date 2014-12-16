@@ -12,7 +12,7 @@ setup(
     long_description = open(path.join(path.dirname(__file__), 'README')).read(),
     install_requires = [
         'Django>=1.4',
-        'elementtree'
+        'requests>=2.0'
     ],
     packages = [
         'bambu_oembed',
