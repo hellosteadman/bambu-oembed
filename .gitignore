@@ -1,1 +1,3 @@
 *.pyc
+/bambu_oembed.egg-info
+/dist

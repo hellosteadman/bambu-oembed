@@ -7,7 +7,7 @@ except ImportError:
     from elementtree import ElementTree
 
 import re
-__version__ = '2.0'
+__version__ = '2.2'
 
 URL_REGEX = re.compile(
     r'<p>(?P<url>(?:http|ftp)s?://' # http:// or https://
@@ -56,6 +56,9 @@ URL_PATTERNS = (
     ),
     (r'^https?://(?:www\.)?scribd\.com/doc/.+$',
         'http://www.scribd.com/services/oembed', 'json'
+    ),
+    (r'^https?://(?:www\.)?soundcloud\.com/(?:[^/]+)/(?:[^/]+)/?$',
+        'http://soundcloud.com/oembed', 'json'
     ),
     (r'^https?://(?:www\.)?twitter\.com/(?:#!/)?[\w]+/status/\d+/?$',
         'https://api.twitter.com/1/statuses/oembed.json', 'json'
