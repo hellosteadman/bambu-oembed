@@ -19,64 +19,51 @@ URL_REGEX = re.compile(
 )
 
 URL_PATTERNS = (
-    (r'^https?://(?:.+\.)?blip\.tv/file/.+$', 'http://blip.tv/oembed/', 'json'),
-    (r'^https?://(?:www\.)?clikthrough\.com/theater/.+$',
-        'http://clikthrough.com/services/oembed/', 'json'
+    (r'^https?://(?:.+\.)?blip\.tv/file/.+$',
+        'https://blip.tv/oembed/', 'json'
     ),
     (r'^https?://(?:www\.)?dailymotion\.com/video/.+$',
-        'http://www.dailymotion.com/api/oembed/', 'json'
+        'https://www.dailymotion.com/api/oembed/', 'json'
     ),
     (r'^https?://(?:www\.)?dotsub\.com/view/.+$',
-        'http://dotsub.com/services/oembed', 'json'
+        'https://dotsub.com/services/oembed', 'json'
     ),
     (r'^https?://(?:www\.)?flickr\.com/photos/.+$',
-        'http://www.flickr.com/services/oembed/', 'xml'
-    ),
-    (r'^https?://(?:www\.)?hulu\.com/watch/.+$',
-        'http://www.hulu.com/api/oembed.json', 'json'
-    ),
-    (r'^https?://(?:www\.)?kinomap\.com/.+$',
-        'http://www.kinomap.com/oembed', 'xml'
+        'https://www.flickr.com/services/oembed/', 'xml'
     ),
     (r'^https?://(?:www\.)?nfb\.ca/film/.+$',
-        'http://www.nfb.ca/remote/services/oembed/',
+        'https://www.nfb.ca/remote/services/oembed/',
         'xml'
     ),
-    (r'^https?://(?:www\.)?poddle\.tv/[\w-]+/\d+/$',
-        'http://poddle.tv/oembed/', 'json'
-    ),
     (r'^https?://(.+\.)?photobucket\.com/(?:albums|groups)/.+$',
-        'http://photobucket.com/oembed', 'json'
-    ),
-    (r'^https?://(?:www\.)?qik\.com/video/.+$',
-        'http://qik.com/api/oembed.json', 'json'
+        'https://api.photobucket.com/oembed', 'json'
     ),
     (r'^https?://(?:www\.)?revision3\.com/.+$',
-        'http://revision3.com/api/oembed/', 'json'
+        'https://revision3.com/api/oembed/', 'json'
     ),
     (r'^https?://(?:www\.)?scribd\.com/doc/.+$',
-        'http://www.scribd.com/services/oembed', 'json'
+        'https://www.scribd.com/services/oembed', 'json'
     ),
     (r'^https?://(?:www\.)?soundcloud\.com/(?:[^/]+)/(?:[^/]+)/?$',
-        'http://soundcloud.com/oembed', 'json'
+        'https://soundcloud.com/oembed', 'json'
     ),
     (r'^https?://(?:www\.)?twitter\.com/(?:#!/)?[\w]+/status/\d+/?$',
         'https://api.twitter.com/1/statuses/oembed.json', 'json'
     ),
     (r'^https?://(?:www\.)?viddler\.com/v/.+$',
-        'http://www.viddler.com/oembed/?format=json', 'json'
+        'https://www.viddler.com/oembed/?format=json', 'json'
     ),
     (r'^https?://(?:www\.)?vimeo\.com/.+$',
-        'http://vimeo.com/api/oembed.json', 'json'
+        'https://vimeo.com/api/oembed.json', 'json'
     ),
     (r'^https?://(?:www\.)?yfrog\.(?:com|ru|com\.tr|it|fr|co\.il|co\.uk|com\.pl|pl|eu|us)/.+$',
-        'http://www.yfrog.com/api/oembed', 'json'
+        'https://www.yfrog.com/api/oembed', 'json'
     ),
     (r'^https?://(?:www\.)?youtube\.com/watch\?v=.+$',
-        'http://www.youtube.com/oembed', 'json'
+        'https://www.youtube.com/oembed', 'json'
     ),
     (r'^https?://(?:www\.)?youtu\.be/.+$',
-        'http://www.youtube.com/oembed', 'json'
+        'https://www.youtube.com/oembed', 'json'
     )
 )
 
