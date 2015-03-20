@@ -7,7 +7,7 @@ except ImportError:
     from elementtree import ElementTree
 
 import re
-__version__ = '2.2a'
+__version__ = '2.3'
 
 URL_REGEX = re.compile(
     r'<p>(?P<url>(?:http|ftp)s?://' # http:// or https://
@@ -92,7 +92,7 @@ def get_oembed_response(url, endpoint, format, width = None):
             params = params,
             headers = {
                 'Accept': mimetype,
-                'User-Agent': 'bambu-tools/2.1'
+                'User-Agent': 'bambu-tools/2.3'
             }
         )
     else:
