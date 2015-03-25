@@ -52,7 +52,7 @@ def oembed(value, width = WIDTH):
                                 url, width, endpoint, format
                             )
                         except:
-                            if not DEBUG:
+                            if DEBUG:
                                 raise
 
                             break

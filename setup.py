@@ -4,7 +4,7 @@ from os import path
 
 setup(
     name = 'bambu-oembed',
-    version = '2.3.1',
+    version = '2.4',
     description = 'Embed resources like YouTube videos, tweets and Flickr images by entering their URL on a single line of text. Methodology inspired by WordPress',
     author = 'Steadman',
     author_email = 'mark@steadman.io',

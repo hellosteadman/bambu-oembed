@@ -7,7 +7,7 @@ except ImportError:
     from elementtree import ElementTree
 
 import re
-__version__ = '2.3.1'
+__version__ = '2.4'
 
 URL_REGEX = re.compile(
     r'<p>(?P<url>(?:http|ftp)s?://' # http:// or https://
@@ -103,10 +103,7 @@ def get_oembed_content(url, endpoint, format, width = None):
     response = get_oembed_response(url, endpoint, format, width)
 
     if format == 'json':
-        try:
-            json = response.json()
-        except:
-            raise Exception('Not a JSON response')
+        json = response.json()
 
         if 'html' in json:
             return json.get('html')
