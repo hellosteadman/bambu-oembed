@@ -4,7 +4,7 @@ from os import path
 
 setup(
     name = 'bambu-oembed',
-    version = '2.1',
+    version = '2.5',
     description = 'Embed resources like YouTube videos, tweets and Flickr images by entering their URL on a single line of text. Methodology inspired by WordPress',
     author = 'Steadman',
     author_email = 'mark@steadman.io',
@@ -23,5 +23,10 @@ setup(
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
         'Framework :: Django'
-    ]
+    ],
+    package_data = {
+        'bambu_oembed': [
+            'static/oembed/*.js'
+        ]
+    }
 )

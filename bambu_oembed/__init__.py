@@ -7,7 +7,7 @@ except ImportError:
     from elementtree import ElementTree
 
 import re
-__version__ = '2.1'
+__version__ = '2.4'
 
 URL_REGEX = re.compile(
     r'<p>(?P<url>(?:http|ftp)s?://' # http:// or https://
@@ -19,43 +19,33 @@ URL_REGEX = re.compile(
 )
 
 URL_PATTERNS = (
-    (r'^https?://(?:.+\.)?blip\.tv/file/.+$', 'http://blip.tv/oembed/', 'json'),
-    (r'^https?://(?:www\.)?clikthrough\.com/theater/.+$',
-        'http://clikthrough.com/services/oembed/', 'json'
+    (r'^https?://(?:.+\.)?blip\.tv/file/.+$',
+        'https://blip.tv/oembed/', 'json'
     ),
     (r'^https?://(?:www\.)?dailymotion\.com/video/.+$',
-        'http://www.dailymotion.com/api/oembed/', 'json'
+        'https://www.dailymotion.com/api/oembed/', 'json'
     ),
     (r'^https?://(?:www\.)?dotsub\.com/view/.+$',
-        'http://dotsub.com/services/oembed', 'json'
+        'https://dotsub.com/services/oembed', 'json'
     ),
     (r'^https?://(?:www\.)?flickr\.com/photos/.+$',
-        'http://www.flickr.com/services/oembed/', 'xml'
-    ),
-    (r'^https?://(?:www\.)?hulu\.com/watch/.+$',
-        'http://www.hulu.com/api/oembed.json', 'json'
-    ),
-    (r'^https?://(?:www\.)?kinomap\.com/.+$',
-        'http://www.kinomap.com/oembed', 'xml'
+        'https://www.flickr.com/services/oembed/', 'xml'
     ),
     (r'^https?://(?:www\.)?nfb\.ca/film/.+$',
-        'http://www.nfb.ca/remote/services/oembed/',
+        'https://www.nfb.ca/remote/services/oembed/',
         'xml'
     ),
-    (r'^https?://(?:www\.)?poddle\.tv/[\w-]+/\d+/$',
-        'http://poddle.tv/oembed/', 'json'
-    ),
     (r'^https?://(.+\.)?photobucket\.com/(?:albums|groups)/.+$',
-        'http://photobucket.com/oembed', 'json'
-    ),
-    (r'^https?://(?:www\.)?qik\.com/video/.+$',
-        'http://qik.com/api/oembed.json', 'json'
+        'https://api.photobucket.com/oembed', 'json'
     ),
     (r'^https?://(?:www\.)?revision3\.com/.+$',
-        'http://revision3.com/api/oembed/', 'json'
+        'https://revision3.com/api/oembed/', 'json'
     ),
     (r'^https?://(?:www\.)?scribd\.com/doc/.+$',
-        'http://www.scribd.com/services/oembed', 'json'
+        'https://www.scribd.com/services/oembed', 'json'
+    ),
+    (r'^https?://(?:www\.)?soundcloud\.com/(?:[^/]+)/(?:[^/]+)/?$',
+        'https://soundcloud.com/oembed', 'json'
     ),
     (r'^https?:\/\/open\.spotify\.com\/[\w]+\/[a-zA-Z0-9]+$',
         'https://embed.spotify.com/oembed/', 'json'
@@ -64,19 +54,19 @@ URL_PATTERNS = (
         'https://api.twitter.com/1/statuses/oembed.json', 'json'
     ),
     (r'^https?://(?:www\.)?viddler\.com/v/.+$',
-        'http://www.viddler.com/oembed/?format=json', 'json'
+        'https://www.viddler.com/oembed/?format=json', 'json'
     ),
     (r'^https?://(?:www\.)?vimeo\.com/.+$',
-        'http://vimeo.com/api/oembed.json', 'json'
+        'https://vimeo.com/api/oembed.json', 'json'
     ),
     (r'^https?://(?:www\.)?yfrog\.(?:com|ru|com\.tr|it|fr|co\.il|co\.uk|com\.pl|pl|eu|us)/.+$',
-        'http://www.yfrog.com/api/oembed', 'json'
+        'https://www.yfrog.com/api/oembed', 'json'
     ),
     (r'^https?://(?:www\.)?youtube\.com/watch\?v=.+$',
-        'http://www.youtube.com/oembed', 'json'
+        'https://www.youtube.com/oembed', 'json'
     ),
     (r'^https?://(?:www\.)?youtu\.be/.+$',
-        'http://www.youtube.com/oembed', 'json'
+        'https://www.youtube.com/oembed', 'json'
     )
 )
 
@@ -92,7 +82,8 @@ def get_oembed_response(url, endpoint, format, width = None):
         raise Exception('Handler configured incorrectly (unrecognised format %s)' % format)
 
     params = {
-        'url': url
+        'url': url,
+        'scheme': 'https'
     }
 
     if int(width) > 0:
@@ -105,7 +96,7 @@ def get_oembed_response(url, endpoint, format, width = None):
             params = params,
             headers = {
                 'Accept': mimetype,
-                'User-Agent': 'bambu-tools/2.1'
+                'User-Agent': 'bambu-tools/2.3.1'
             }
         )
     else:
@@ -115,10 +106,7 @@ def get_oembed_content(url, endpoint, format, width = None):
     response = get_oembed_response(url, endpoint, format, width)
 
     if format == 'json':
-        try:
-            json = response.json()
-        except:
-            raise Exception('Not a JSON response')
+        json = response.json()
 
         if 'html' in json:
             return json.get('html')
