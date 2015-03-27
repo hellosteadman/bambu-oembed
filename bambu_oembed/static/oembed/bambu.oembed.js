@@ -38,15 +38,13 @@ jQuery(document).ready(
                                                         'data-width'
                                                     ).removeAttr(
                                                         'data-format'
-                                                    ).css(
-                                                        {
-                                                            width: 'auto'
-                                                        }
-                                                    );
+                                                    ).addClass('loaded');
                                                 }
                                             },
                                             error: function(data) {
-                                                resource.remove();
+                                                resource.html(
+                                                    '<div class="alert alert-danger"><p>This resource couldn&rsquo;t be embedded.</p></div>'
+                                                ).addClass('error');
                                             }
                                         }
                                     );

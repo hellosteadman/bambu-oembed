@@ -7,7 +7,7 @@ except ImportError:
     from elementtree import ElementTree
 
 import re
-__version__ = '2.4'
+__version__ = '2.5.1'
 
 URL_REGEX = re.compile(
     r'<p>(?P<url>(?:http|ftp)s?://' # http:// or https://
