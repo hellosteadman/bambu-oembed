@@ -8,6 +8,7 @@ import re
 PATTERNS = list(URL_PATTERNS) + getattr(settings, 'OEMBED_URL_PATTERNS', [])
 WIDTH = getattr(settings, 'OEMBED_WIDTH', 640)
 DEBUG = getattr(settings, 'OEMBED_DEBUG', False)
+AJAX = getattr(settings, 'OEMBED_AJAX', False)
 
 register = Library()
 
@@ -41,23 +42,28 @@ def oembed(value, width = WIDTH):
 
             for (pattern, endpoint, format) in PATTERNS:
                 if not re.match(pattern, url, re.IGNORECASE) is None:
-                    try:
-                        resource = Resource.objects.get(
-                            url = url,
-                            width = width
+                    if AJAX:
+                        inner = '<div class="bambu-oembed-resource" data-url="%s" data-endpoint="%s" data-format="%s" data-width="%s"></div>' % (
+                            url, endpoint, format, width
                         )
-                    except Resource.DoesNotExist:
+                    else:
                         try:
-                            resource = Resource.objects.create_resource(
-                                url, width, endpoint, format
+                            resource = Resource.objects.get(
+                                url = url,
+                                width = width
                             )
-                        except:
-                            if DEBUG:
-                                raise
+                        except Resource.DoesNotExist:
+                            try:
+                                resource = Resource.objects.create_resource(
+                                    url, width, endpoint, format
+                                )
+                            except:
+                                if DEBUG:
+                                    raise
 
-                            break
+                                break
 
-                    inner = resource.html
+                        inner = resource.html
                     break
         else:
             inner = ''
