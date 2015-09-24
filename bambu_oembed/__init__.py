@@ -2,7 +2,7 @@ from django.conf import settings
 from xml.etree import ElementTree
 import requests, json, re
 
-__version__ = '3.0'
+__version__ = '3.1'
 
 URL_REGEX = re.compile(
     r'<p>(?P<url>(?:http|ftp)s?://' # http:// or https://
